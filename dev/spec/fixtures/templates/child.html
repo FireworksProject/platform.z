@@ -1,0 +1,10 @@
+{{extends ./base.html}}
+{{block head}}
+<title>child</title>
+{{/block}}
+{{block body}}
+	<p>extended</p>
+	{{block extend}}
+		<p>null</p>
+	{{/block}}
+{{/block}}

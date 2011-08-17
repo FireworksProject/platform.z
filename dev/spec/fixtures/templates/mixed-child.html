@@ -1,0 +1,5 @@
+{{extends ./base.html}}
+{{block head}}<title>${ title }</title>{{/block}}
+{{block body}}
+{{each(i, item) items}}<p>${ item }</p>{{/each}}
+{{/block}}

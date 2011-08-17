@@ -25,7 +25,6 @@ describe 'component manager', ->
         resolution = -> return resolved
 
         sca.startManager {libpath: COMPATH, main: 'invoke_counter'}, (err, counter) ->
-            console.log(err)
             resolved = true
             expect(counter.serviceCount).toBe 1
             expect(counter.componentCount).toBe 3
