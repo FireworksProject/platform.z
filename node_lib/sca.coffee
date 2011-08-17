@@ -13,54 +13,16 @@ typestr = (obj) ->
 class Component
     constructor: (@component) ->
 
+    wrap: ->
+        return @component
+
 
 class ServiceComponent extends Component
     type: 'service'
 
-    wrap: ->
-        wrappedComponent = Object.create(@component)
-        for own name, p of wrappedComponent
-            if typeof p isnt 'function'
-                delete wrappedComponent[name]
-        return wrappedComponent
-
 
 class ConstructorComponent extends Component
     type: 'constructor'
-
-    wrap: ->
-        if not @makeAbstractDataType
-            @makeAbstractDataType = (spec) =>
-                abstractDataInstnace = @component(spec)
-                for own name, p of abstractDataInstnace
-                    if typeof p is 'function'
-                        delete abstractDataInstnace[name]
-                return abstractDataInstnace
-
-        return @makeAbstractDataType
-
-
-class MiddlewareComponent extends Component
-    type: 'middleware'
-
-    wrap: ->
-        if not @middleware
-            @middleware = (spec) =>
-                fn = @component(spec)
-                return createMiddleware(fn)
-        return @middleware
-
-
-# Wrap a middleware function in a proxy (used by MiddlewareComponent)
-createMiddleware = (fn) ->
-    middleware = (opts, callback) ->
-        process.nextTick ->
-            fn opts, ->
-                callback.apply({}, arguments)
-                return
-            return
-        return
-    return middleware
 
 
 # @constructor Loader
@@ -135,6 +97,7 @@ exports.createLoader = (opts) ->
         if typeof comp is 'undefined'
             comp = initializeComponent(id)
 
+        if comp.type is 'constructor' then delete components[id]
         return comp.wrap()
 
     initializeComponent = (id) ->
@@ -162,16 +125,12 @@ exports.createLoader = (opts) ->
         interface.getComponent = (target) ->
             return getComponent(id, target)
 
-        interface.createService = (service) ->
-            components[id] = new ServiceComponent(service)
+        interface.createService = (svc) ->
+            components[id] = new ServiceComponent(svc)
             return
 
-        interface.createConstructor = (fn) ->
-            components[id] = new ConstructorComponent(fn)
-            return
-
-        interface.createMiddleware = (fn) ->
-            components[id] = new MiddlewareComponent(fn)
+        interface.createComponent = (comp) ->
+            components[id] = new ConstructorComponent(comp)
             return
 
         return interface

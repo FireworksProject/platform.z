@@ -20,10 +20,37 @@ describe 'component manager', ->
             return
         return
 
+    it 'should cache service component instances', ->
+        resolved = false
+        resolution = -> return resolved
+
+        sca.startManager {libpath: COMPATH, main: 'invoke_counter'}, (err, counter) ->
+            console.log(err)
+            resolved = true
+            expect(counter.serviceCount).toBe 1
+            expect(counter.componentCount).toBe 3
+            return
+
+        waitsFor(resolution, 'counter service', 100)
+        return
+
     return
 
 
 describe 'startManager() invalid parameter handling', ->
+
+    it 'should return the main component back to the callback', ->
+        resolved = false
+        resolution = -> return resolved
+
+        sca.startManager {libpath: COMPATH, main: 'simple'}, (err, main) ->
+            resolved = true
+            expect(main.val()).toBe 4
+            return
+
+        waitsFor(resolution, 'counter service', 100)
+        return
+        return
 
     it 'should throw when an invalid libpath is passed', ->
         doit = ->
