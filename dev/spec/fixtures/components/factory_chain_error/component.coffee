@@ -1,6 +1,6 @@
 factory = (manager) ->
-    df = manager.getComponent('defunct_factory')
-    manager.createService({})
+    df =@getComponent('defunct_factory')
+    @createService({})
     return
 
 exports.init = (declare) ->

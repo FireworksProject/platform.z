@@ -146,7 +146,7 @@ exports.createLoader = (opts) ->
 
         spec = {id: id}
         components[id] = null
-        factory(createManagerInterface(spec))
+        factory.call(createManagerInterface(spec))
         comp = components[id]
 
         if not comp

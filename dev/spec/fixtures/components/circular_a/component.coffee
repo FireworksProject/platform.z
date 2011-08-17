@@ -1,6 +1,6 @@
 factory = (manager) ->
-    manager.getComponent('circular_b')
-    manager.createService({})
+    @getComponent('circular_b')
+    @createService({})
     return
 
 exports.init = (declare) ->

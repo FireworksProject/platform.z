@@ -1,5 +1,5 @@
 factory = (manager) ->
-    manager.getComponent('foobar')
+    @getComponent('foobar')
     return
 
 exports.init = (declare) ->
