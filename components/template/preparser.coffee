@@ -152,6 +152,11 @@ class Lexer extends events.EventEmitter
             @emit('op', {operator: 'extends', args: args})
             return passthru
 
+        if operator is 'import'
+            @emit('op', {operator: 'import', args: args, section: @currentSection})
+            @currentSection = ''
+            return passthru
+
         if operator is 'block'
             @emit('op', {operator: 'block', args: args, section: @currentSection})
             @currentSection = ''
@@ -245,6 +250,12 @@ class TemplateFile
             if spec.operator is 'extends'
                 @super = spec.args[0]
                 return
+            if spec.operator is 'import'
+                relpath = spec.args[0]
+                abspath = path.resolve(path.dirname(@filepath), relpath)
+                text = fs.readFileSync(abspath, 'utf8')
+                @currentNode.appendNode(new TextNode(spec.section))
+                @currentNode.appendNode(new TextNode(text))
             if spec.operator is 'block'
                 @currentNode.appendNode(new TextNode(spec.section))
                 @currentNode = @currentNode.appendNode(new BlockNode(spec.args[0]))

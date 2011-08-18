@@ -113,7 +113,7 @@ describe 'TemplateFile', ->
             return baseTemplate
 
         new TemplateFile(file).parse(whenParsed)
-        waitsFor(parsedBaseTemplate, 'base template to be parsed', 300)
+        waitsFor(parsedBaseTemplate, 'grandchild template to be parsed', 300)
 
         runs ->
             baseTree = baseTemplate.tree
@@ -234,6 +234,27 @@ describe 'preparser::preProcess()', ->
             str += '<title>${ title }</title>\n'
             str += '</head><body>\n\n'
             str += '{{each(i, item) items}}<p>${ item }</p>{{/each}}\n\n'
+            str += '</body></html>\n'
+            expect(template).toBe str
+        return
+
+    it 'should import the file text declared by import tags', ->
+        template = false
+        file = path.join(fixtures, 'import.html')
+        preparser.preProcess file, (err, tpl) ->
+            expect(err).toBeFalsy()
+            template = tpl
+            return
+
+        templateToBeParsed = ->
+            return template
+
+        waitsFor(templateToBeParsed, 'template import', 700)
+        runs ->
+            str = '<!doctype html>\n<html><head>\n<meta charset="utf-8">\n'
+            str += '<title>import</title>\n'
+            str += '</head><body>\n'
+            str += '<h1>imported snippet</h1>\n\n'
             str += '</body></html>\n'
             expect(template).toBe str
         return
