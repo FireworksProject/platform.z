@@ -1,2 +1,1 @@
-Platform
-========
+*This repository is depricated!*
